@@ -1,0 +1,24 @@
+CREATE OR REPLACE VIEW TV_Sales_Details AS 
+SELECT 
+	t.sales_id,
+	ii.invoice_id,
+	ii.invoice_code ,
+	ppv.product_code, 
+	t.quantity,
+	(ppv.cost_price + ppv.mark_up ) AS selling_price,
+	(ppv.cost_price + ppv.mark_up ) * t.quantity AS total_amount,
+	ipv.amount_paid,
+	ipm.payment_name,
+	
+	CASE
+		WHEN ipv.amount_paid = (ppv.mark_up + ppv.cost_price) * t.quantity THEN 'PAID'
+		WHEN ipv.amount_paid < (ppv.mark_up + ppv.cost_price) * t.quantity THEN 'PARTIAL'
+		ELSE 'NOT PAID'
+	END AS status
+
+FROM IM_Sales t 
+LEFT JOIN IM_Invoices ii ON t.invoice_id = ii.invoice_id 
+LEFT JOIN PM_Product_Variants ppv ON t.pv_id = ppv.pv_id 
+LEFT JOIN IM_Payment_Variant ipv ON t.sales_id = ipv.sales_id 
+LEFT JOIN IM_Payment_Method ipm  ON ipv.paymethod_id =ipm.paymethod_id 
+

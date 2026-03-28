@@ -1,0 +1,19 @@
+CREATE OR REPLACE VIEW TV_Payment_Total_Details AS 
+SELECT 
+	ii.invoice_id,
+	ii.invoice_code,
+	SUM(ipv.amount_paid) AS total_payment,
+	ip.payment_date,
+	ie.first_name,
+	ipv.created_at,
+	ipv.updated_at 
+FROM IM_Invoices ii
+LEFT JOIN IM_Payment ip ON ii.invoice_id = ip.invoice_id 
+LEFT JOIN IM_Payment_Variant ipv ON ip.payment_id = ipv.payment_id
+LEFT JOIN IM_Employee ie  ON ipv.employee_id = ie.employee_id 
+GROUP BY ii.invoice_id,
+	ii.invoice_code,
+	ip.payment_date,
+	ie.first_name,
+	ipv.created_at,
+	ipv.updated_at 

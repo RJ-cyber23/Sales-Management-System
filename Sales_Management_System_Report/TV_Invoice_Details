@@ -1,0 +1,14 @@
+CREATE OR REPLACE VIEW TV_Invoice_Details AS
+SELECT
+        ii.invoice_id,
+        ii.invoice_code,
+        ic.first_name AS customer_id ,
+        ii.invoice_date,
+        ie.first_name AS employee_id,
+        ii.created_at,
+        ii.updated_at
+        
+FROM IM_Invoices ii
+LEFT JOIN IM_Customers ic ON ii.customer_id = ic.customer_id
+LEFT JOIN IM_Employee ie ON ii.employee_id = ie.employee_id
+

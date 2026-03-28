@@ -1,0 +1,21 @@
+CREATE OR REPLACE VIEW VS_Product_Price_Details AS
+SELECT 
+	ppv.pv_id,
+	pp.product_name,
+	pps.quantity,
+	pquom.quom_name,
+	ppv.mark_up,
+	ppv.cost_price,
+	
+	IF(ppv.mark_up = 0,0, (ppv.mark_up + ppv.cost_price)) AS unit_price,
+	
+	IF(ppv.mark_up = 0,0, (ppv.mark_up * pps.quantity)) AS subtotal_mark_up,
+	IF(ppv.cost_price = 0,0, (ppv.cost_price * pps.quantity)) AS subtotal_cost,
+	
+	IF(ppv.mark_up = 0,0, (ppv.mark_up + ppv.cost_price) * pps.quantity) AS subtotal_unit_price
+	
+	
+FROM PM_Product_Variants ppv 
+LEFT JOIN PM_Products pp ON ppv.product_id  = pp.product_id 
+LEFT JOIN PM_Product_Stocks pps ON ppv.pv_id = pps.pv_id 
+LEFT JOIN PM_Quantity_Unit_of_Measure pquom ON pps.quom_id  =pquom.quom_id 
